@@ -17,7 +17,7 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
-import util
+from util import *
 from game import Directions
 from typing import List
 
@@ -102,7 +102,10 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
         if problem.isGoalState(current_state):
             return actions
         
-        if current_state not in visited: # Si el estado actual ya fue visitado, quiere decir que volvi a un punto ya conocido, es decir que mi paso anterior debe ser descartado. Si se vuelve a un nodo conocido, se retorna [] lo que hace que se ignore el paso anterior
+        if current_state not in visited: 
+            # Si el estado actual ya fue visitado, quiere decir que volvi a un punto ya conocido, 
+            # es decir que mi paso anterior debe ser descartado. Si se vuelve a un nodo conocido, 
+            # se retorna [] lo que hace que se ignore el paso anterior
             visited.add(current_state)
             for succesor, action, cost in problem.getSuccessors(current_state):
                 new_actions = actions + [action] # Meto al final la accion de ir al siguiente estado
