@@ -89,8 +89,26 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = Stack()
+    start_state = problem.getStartState()
+    fringe.push((start_state, [])) # Guardamos (estado, camino de acciones)
+
+    visited = set()
+
+    while not fringe.isEmpty():
+        current_state, actions = fringe.pop()
+        print("Current State: ", current_state)
+        print("Actions: ", actions)
+        if problem.isGoalState(current_state):
+            return actions
+        
+        if current_state not in visited: # Si el estado actual ya fue visitado, quiere decir que volvi a un punto ya conocido, es decir que mi paso anterior debe ser descartado. Si se vuelve a un nodo conocido, se retorna [] lo que hace que se ignore el paso anterior
+            visited.add(current_state)
+            for succesor, action, cost in problem.getSuccessors(current_state):
+                new_actions = actions + [action] # Meto al final la accion de ir al siguiente estado
+                fringe.push((succesor, new_actions))
+
+    return []
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
