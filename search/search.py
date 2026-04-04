@@ -160,10 +160,37 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
+
+"""
+Usar:
+python pacman.py -l mediumMaze -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
+TODO: ManhattanHeuristica ya estaba definido como una heuristica, deberiamos hacer otra? 
+"""
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = PriorityQueue()
+    start_state = problem.getStartState()
+    # Guardamos (estado, acciones); prioridad = g(n) + h(n)
+    fringe.push((start_state, []), heuristic(start_state, problem))
+
+    visited = set()
+
+    while not fringe.isEmpty():
+        current_state, actions = fringe.pop()
+
+        if problem.isGoalState(current_state):
+            return actions
+
+        if current_state not in visited:
+            visited.add(current_state)
+            for successor, action, stepCost in problem.getSuccessors(current_state):
+                if successor not in visited:
+                    new_actions = actions + [action]
+                    g = problem.getCostOfActions(new_actions)   # costo real acumulado
+                    h = heuristic(successor, problem)           # estimacion heuristica
+                    fringe.push((successor, new_actions), g + h)
+
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
