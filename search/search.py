@@ -160,7 +160,6 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
-
 """
 Usar:
 python pacman.py -l mediumMaze -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
