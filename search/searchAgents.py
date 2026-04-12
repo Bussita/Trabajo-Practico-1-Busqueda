@@ -383,7 +383,7 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
-"""
+
 def cornersHeuristic2(state: Any, problem: CornersProblem):
     
    
@@ -398,9 +398,9 @@ def cornersHeuristic2(state: Any, problem: CornersProblem):
             distance += [util.manhattanDistance(state[0], corner)]
 
     return 0 if distance == [] else min(distance)
-"""
 
-def cornersHeuristic(state: Any, problem: CornersProblem):
+
+def cornersHeuristic1(state: Any, problem: CornersProblem):
     """
     A heuristic for the CornersProblem that you defined.
 
