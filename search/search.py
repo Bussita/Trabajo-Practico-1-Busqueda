@@ -103,9 +103,9 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
             return actions
         
         if current_state not in visited: 
-            # Si el estado actual ya fue visitado, quiere decir que volvi a un punto ya conocido, 
-            # es decir que mi paso anterior debe ser descartado. Si se vuelve a un nodo conocido, 
-            # se retorna [] lo que hace que se ignore el paso anterior
+            # Si el estado actual ya fue visitado, se salta el bloque if y se sigue con la siguiente
+            # iteracion del while. Esto hace que se eviten los ciclos dentro del grafo (en nuestro caso la grilla)
+            # y que ademas se ahorren iteraciones si hay múltiples caminos hacia un mismo nodo.
             visited.add(current_state)
             for succesor, action, cost in problem.getSuccessors(current_state):
                 new_actions = actions + [action] # Meto al final la accion de ir al siguiente estado
@@ -168,28 +168,32 @@ TODO: ManhattanHeuristica ya estaba definido como una heuristica, deberiamos hac
 """
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
+    # Hacemos una cola de prioridad donde claramente la prioridad son los menos costosos.
     fringe = PriorityQueue()
     start_state = problem.getStartState()
     # Guardamos (estado, acciones); prioridad = g(n) + h(n)
-    fringe.push((start_state, []), heuristic(start_state, problem))
+    fringe.push((start_state, []), heuristic(start_state, problem)) # En el estado inicial el valor es 0 + h
 
-    visited = set()
+    # Usamos un diccionario como estructura de datos para manejar los visitados, la razon para esto
+    # es que A* puede revisitar nodos pero esta vez llegando con un costo mas bajo y entonces
+    # deberiamos volver a expandir con este costo.
+    visited = {}
 
     while not fringe.isEmpty():
         current_state, actions = fringe.pop()
 
+        current_cost = problem.getCostOfActions(actions) # Calculamos g(n)
+
         if problem.isGoalState(current_state):
             return actions
 
-        if current_state not in visited:
-            visited.add(current_state)
+        if current_state not in visited or (current_state in visited and current_cost < visited[current_state]):
+            visited[current_state] = current_cost
             for successor, action, stepCost in problem.getSuccessors(current_state):
-                if successor not in visited:
                     new_actions = actions + [action]
                     g = problem.getCostOfActions(new_actions)   # costo real acumulado
                     h = heuristic(successor, problem)           # estimacion heuristica
                     fringe.push((successor, new_actions), g + h)
-
     return []
 
 # Abbreviations
