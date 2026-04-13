@@ -168,7 +168,7 @@ TODO: ManhattanHeuristica ya estaba definido como una heuristica, deberiamos hac
 """
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    # Hacemos una cola de prioridad donde claramente la prioridad son los menos costosos.
+    # Hacemos una cola de prioridad donde la mayor prioridad la tienen los menos costosos.
     fringe = PriorityQueue()
     start_state = problem.getStartState()
     # Guardamos (estado, acciones); prioridad = g(n) + h(n)
@@ -188,6 +188,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
             return actions
 
         if current_state not in visited or (current_state in visited and current_cost < visited[current_state]):
+            # Esto es, si no visitamos ya a current_state O si lo hemos visitado antes, ahora le llegamos con un costo menor.
             visited[current_state] = current_cost
             for successor, action, stepCost in problem.getSuccessors(current_state):
                     new_actions = actions + [action]
