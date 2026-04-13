@@ -298,10 +298,10 @@ class CornersProblem(search.SearchProblem):
         """
 
         if self.startingPosition not in self.corners:
-            return self.startingPosition, self.corners
-        
-        if self.startingPosition == (1,1):
-            return self.startingPosition, ((-1, -1), self.corners[1], self.corners[2], self.corners[3])
+            return self.startingPosition, self.corners # Si la pos inicial no es un corner, retornamos (pos_inicial, corners)
+        # (-1,-1) marcara los corners visitados
+        if self.startingPosition == (1,1): # EJ: Si es el corner de (1,1)
+            return self.startingPosition, ((-1, -1), self.corners[1], self.corners[2], self.corners[3]) # EJ: retornamos (pos_inicial, ((-1,-1), corner2, corner3, corner4)) 
         
         if self.startingPosition[0] == 1:
             return self.startingPosition, (self.corners[0], (-1, -1), self.corners[2], self.corners[3])
@@ -315,11 +315,11 @@ class CornersProblem(search.SearchProblem):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        for x in state[1]:
-            if x != (-1, -1):
-                return False 
+        for x in state[1]: # Recorremos la lista de corners
+            if x != (-1, -1): # Si hay algun corner que no sea (-1,-1)
+                return False # No es el estado final
         
-        return True
+        return True # Si todos los corners son (-1,-1), es el estado final
 
     @staticmethod
     def _changeCorners(x, y, corners):
