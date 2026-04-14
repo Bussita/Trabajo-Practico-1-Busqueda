@@ -347,6 +347,8 @@ class CornersProblem(search.SearchProblem):
             action, stepCost), where 'successor' is a successor to the current
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
+        
+        ((x,y), ((1,1,), (5,1), ...))
         """
 
         successors = []
@@ -382,10 +384,7 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-
-
 def cornersHeuristic2(state: Any, problem: CornersProblem):
-    
    
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
@@ -517,9 +516,22 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    current_pos, foodGrid = state
+    posComida = foodGrid.asList()
+
+    if not posComida:
+        return 0
+
+    total = 0
+
+    remaining = list(posComida)
+    while remaining:
+        nearest = min(remaining, key=lambda food: util.manhattanDistance(current_pos, food))
+        total += util.manhattanDistance(current_pos, nearest)
+        current_pos = nearest
+        remaining.remove(nearest)
+
+    return total
 
 
 class ClosestDotSearchAgent(SearchAgent):
