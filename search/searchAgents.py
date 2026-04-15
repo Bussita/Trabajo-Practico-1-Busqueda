@@ -479,31 +479,60 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchType = FoodSearchProblem
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
-    """
-    Your heuristic for the FoodSearchProblem goes here.
-
-    If using A* ever finds a solution that is worse uniform cost search finds,
-    your search may have a but our your heuristic is not admissible!  On the
-    other hand, inadmissible heuristics may find optimal solutions, so be careful.
-
-    The state is a tuple ( pacmanPosition, foodGrid ) where foodGrid is a Grid
-    (see game.py) of either True or False. You can call foodGrid.asList() to get
-    a list of food coordinates instead.
-
-    If you want access to info like walls, capsules, etc., you can query the
-    problem.  For example, problem.walls gives you a Grid of where the walls
-    are.
-
-    If you want to *store* information to be reused in other calls to the
-    heuristic, there is a dictionary called problem.heuristicInfo that you can
-    use. For example, if you only want to count the walls once and store that
-    value, try: problem.heuristicInfo['wallCount'] = problem.walls.count()
-    Subsequent calls to this heuristic can access
-    problem.heuristicInfo['wallCount']
-    """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    foodList = foodGrid.asList()
+
+    if not foodList:
+        return 0
+
+    # Cache de distancias Manhattan entre pares de posiciones fijas del mapa.
+    # Como las posiciones del laberinto son fijas, podemos reutilizar este cache
+    # en todas las llamadas posteriores a la heurística.
+    if 'dist_cache' not in problem.heuristicInfo:
+        problem.heuristicInfo['dist_cache'] = {}
+    cache = problem.heuristicInfo['dist_cache']
+
+    def mdist(a, b):
+        key = (a, b) if a <= b else (b, a)
+        if key not in cache:
+            cache[key] = util.manhattanDistance(a, b)
+        return cache[key]
+
+    # ------------------------------------------------------------------ #
+    # Heurística: MST (Árbol Generador Mínimo) con distancias Manhattan   #
+    # sobre el conjunto {posición_actual} ∪ {toda la comida restante}.    #
+    #                                                                      #
+    # Admisibilidad: cualquier recorrido que recoja toda la comida debe    #
+    # "conectar" todos esos puntos; el MST es el menor costo posible de   #
+    # conectarlos, por lo que nunca sobreestima.                           #
+    #                                                                      #
+    # Consistencia: al moverse un paso (costo 1) cada distancia Manhattan #
+    # cambia en ±1, por lo que el MST puede bajar en ≤ 1.                 #
+    #   h(n) ≤ 1 + h(n')   ✓                                              #
+    # ------------------------------------------------------------------ #
+    nodes = [position] + foodList
+    n = len(nodes)
+
+    # Algoritmo de Prim
+    in_mst  = [False] * n
+    min_key = [float('inf')] * n
+    min_key[0] = 0          # arrancamos desde la posición de Pacman
+    mst_cost = 0
+
+    for _ in range(n):
+        # Nodo fuera del MST con menor clave
+        u = min((i for i in range(n) if not in_mst[i]), key=lambda i: min_key[i])
+        in_mst[u] = True
+        mst_cost += min_key[u]
+
+        # Actualizar claves de los vecinos no incluidos
+        for v in range(n):
+            if not in_mst[v]:
+                d = mdist(nodes[u], nodes[v])
+                if d < min_key[v]:
+                    min_key[v] = d
+
+    return mst_cost
 
 
 class ClosestDotSearchAgent(SearchAgent):
