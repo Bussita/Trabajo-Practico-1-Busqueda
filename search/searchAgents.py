@@ -254,7 +254,6 @@ class StayWestSearchAgent(SearchAgent):
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn)
 
-# TODO: Hacer heuristica para A*.
 def manhattanHeuristic(position, problem, info={}):
     "The Manhattan distance heuristic for a PositionSearchProblem"
     xy1 = position
@@ -383,7 +382,6 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
-
 def cornersHeuristicPoor(state: Any, problem: CornersProblem):
 
     distance = []
@@ -498,18 +496,6 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
             cache[key] = util.manhattanDistance(a, b)
         return cache[key]
 
-    # ------------------------------------------------------------------ #
-    # Heurística: MST (Árbol Generador Mínimo) con distancias Manhattan   #
-    # sobre el conjunto {posición_actual} ∪ {toda la comida restante}.    #
-    #                                                                      #
-    # Admisibilidad: cualquier recorrido que recoja toda la comida debe    #
-    # "conectar" todos esos puntos; el MST es el menor costo posible de   #
-    # conectarlos, por lo que nunca sobreestima.                           #
-    #                                                                      #
-    # Consistencia: al moverse un paso (costo 1) cada distancia Manhattan #
-    # cambia en ±1, por lo que el MST puede bajar en ≤ 1.                 #
-    #   h(n) ≤ 1 + h(n')   ✓                                              #
-    # ------------------------------------------------------------------ #
     nodes = [position] + foodList
     n = len(nodes)
 

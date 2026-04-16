@@ -97,8 +97,8 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
 
     while not fringe.isEmpty():
         current_state, actions = fringe.pop()
-        print("Current State: ", current_state)
-        print("Actions: ", actions)
+        # print("Current State: ", current_state)
+        # print("Actions: ", actions)
         if problem.isGoalState(current_state):
             return actions
         
@@ -163,7 +163,6 @@ def nullHeuristic(state, problem=None) -> float:
 """
 Usar:
 python pacman.py -l mediumMaze -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
-TODO: ManhattanHeuristica ya estaba definido como una heuristica, deberiamos hacer otra? 
 """
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
